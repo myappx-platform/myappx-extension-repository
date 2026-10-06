@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: org.idempiere.myappx.extension.repository
+Bundle-ManifestVersion: 2
+Bundle-Name: MyAppx Extension Repository
+Bundle-SymbolicName: org.idempiere.myappx.extension.repository;singleton:=true
+Bundle-Version: 14.0.0.qualifier
+Bundle-Vendor: Ken Longnan <ken.longnan@gmail.com>
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version>=17))"
+Web-ContextPath: /myappx-extension-repository
+Jetty-Environment: ee8
+Eclipse-BundleShape: dir
+Import-Package: javax.servlet;version="4.0.0",
+ javax.servlet.http;version="4.0.0"
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy

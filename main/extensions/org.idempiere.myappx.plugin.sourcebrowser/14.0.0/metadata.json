@@ -1,0 +1,39 @@
+{
+  "id": "org.idempiere.myappx.plugin.sourcebrowser",
+  "version": "14.0.0",
+  "idempiereVersion": "14",
+  "releaseDate": "2026-09-13",
+  "name": "MyAppx Source Browser",
+  "description": "Read-only assembled iDempiere source pack browser (tree, search, Monaco). Optional Copilot jump target.",
+  "categories": [
+    "Developer",
+    "Tools"
+  ],
+  "tags": [
+    "source",
+    "monaco",
+    "myappx",
+    "browser",
+    "odt"
+  ],
+  "entityType": "MYAPPX.SRB",
+  "bundles": [
+    {
+      "symbolicName": "org.idempiere.myappx.plugin.sourcebrowser",
+      "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.sourcebrowser_14.0.0.jar",
+      "sha256": "fa5cf0661d0398b9fa71e199e216bd54bc7f559f0e759b676b2ee297771ac0da"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "org.idempiere.myappx.plugin.odt",
+      "version": "14.0.0"
+    }
+  ],
+  "database": [
+    {
+      "id": "postgresql",
+      "version": "17"
+    }
+  ]
+}

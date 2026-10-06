@@ -1,0 +1,48 @@
+{
+  "id": "org.idempiere.myappx.plugin.aic",
+  "version": "1.0.0",
+  "idempiereVersion": "14",
+  "releaseDate": "2026-09-02",
+  "name": "iDempiere AI Core",
+  "description": "AI orchestrator with Bedrock/SiliconFlow, MCP tools, desktop Copilot, and /ai chat APIs. Requires ODT, REST, and MCP.",
+  "categories": [
+    "Integration",
+    "AI"
+  ],
+  "tags": [
+    "ai",
+    "copilot",
+    "llm",
+    "bedrock",
+    "siliconflow",
+    "alanlesc1"
+  ],
+  "entityType": "AI",
+  "bundles": [
+    {
+      "symbolicName": "org.idempiere.myappx.plugin.aic",
+      "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.aic_1.0.0.jar",
+      "sha256": "1151a1092b21745166cde8c68850658436959c548fa4e4e7f6dd8a544791f274"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "org.idempiere.myappx.plugin.odt",
+      "version": "14.0.0"
+    },
+    {
+      "id": "com.trekglobal.idempiere.rest.api",
+      "version": "1.0.0"
+    },
+    {
+      "id": "org.idempiere.mcp.server",
+      "version": "1.0.0"
+    }
+  ],
+  "database": [
+    {
+      "id": "postgresql",
+      "version": "17"
+    }
+  ]
+}

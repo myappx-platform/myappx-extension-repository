@@ -1,0 +1,10 @@
+# MyAppx extension catalog inventory
+# Format: <myappx-plugins-module-folder>|<Bundle-SymbolicName>
+# Order = publish/install order (dependencies first). Lines starting with # are ignored.
+myappx-plugin-odt|org.idempiere.myappx.plugin.odt
+myappx-plugin-zzz|org.idempiere.myappx.plugin.zzz
+myappx-plugin-tenant-default|org.idempiere.myappx.plugin.tenant.default
+id-plugin-bxservice-idempiere-rest|com.trekglobal.idempiere.rest.api
+id-plugin-hengsin-idempiere-mcp|org.idempiere.mcp.server
+myappx-plugin-aicopilot|org.idempiere.myappx.plugin.aic
+myappx-plugin-sourcebrowser|org.idempiere.myappx.plugin.sourcebrowser

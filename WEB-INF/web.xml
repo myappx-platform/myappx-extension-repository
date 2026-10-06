@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+	   version="4.0"
+	   metadata-complete="true">
+	<display-name>MyAppx Extension Repository</display-name>
+	<description>Static extension catalog under Web-ContextPath /myappx-extension-repository</description>
+
+	<filter>
+		<filter-name>catalogBaseUrl</filter-name>
+		<filter-class>org.idempiere.myappx.extension.repository.CatalogBaseUrlFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>catalogBaseUrl</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>default</servlet-name>
+		<servlet-class>org.eclipse.jetty.ee8.servlet.DefaultServlet</servlet-class>
+		<init-param>
+			<param-name>dirAllowed</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</servlet>
+
+	<mime-mapping>
+		<extension>json</extension>
+		<mime-type>application/json</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>md</extension>
+		<mime-type>text/markdown;charset=UTF-8</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>jar</extension>
+		<mime-type>application/java-archive</mime-type>
+	</mime-mapping>
+</web-app>

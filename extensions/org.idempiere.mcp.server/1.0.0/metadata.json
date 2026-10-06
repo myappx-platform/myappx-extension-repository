@@ -1,0 +1,40 @@
+{
+  "id": "org.idempiere.mcp.server",
+  "version": "1.0.0",
+  "idempiereVersion": "14",
+  "releaseDate": "2026-07-26",
+  "name": "iDempiere MCP Server",
+  "description": "Model Context Protocol server under /mcp/ for AI tool use; requires iDempiere REST API.",
+  "categories": [
+    "Integration",
+    "AI"
+  ],
+  "tags": [
+    "mcp",
+    "ai",
+    "tools",
+    "hengsin"
+  ],
+  "entityType": "MCP",
+  "bundles": [
+    {
+      "symbolicName": "org.idempiere.mcp.server",
+      "downloadUrl": "../id-plugin-hengsin-idempiere-mcp/org.idempiere.mcp.server/target/org.idempiere.mcp.server-1.0.0-SNAPSHOT.jar"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "com.trekglobal.idempiere.rest.api",
+      "version": "1.0.0"
+    }
+  ],
+  "database": [
+    {
+      "id": "postgresql",
+      "version": "17"
+    },
+    {
+      "id": "oracle"
+    }
+  ]
+}

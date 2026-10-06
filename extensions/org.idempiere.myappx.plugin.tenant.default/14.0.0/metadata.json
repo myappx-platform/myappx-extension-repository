@@ -1,0 +1,38 @@
+{
+  "id": "org.idempiere.myappx.plugin.tenant.default",
+  "version": "14.0.0",
+  "idempiereVersion": "14",
+  "releaseDate": "2026-07-14",
+  "name": "MyAppx Tenant Default",
+  "description": "Pre-provision Default tenant and Pack-in system/tenant dictionary baseline for MyAppx deployments.",
+  "categories": [
+    "Tenant",
+    "Dictionary"
+  ],
+  "tags": [
+    "myappx",
+    "tenant",
+    "default",
+    "packin",
+    "odt"
+  ],
+  "entityType": "DEFAULT",
+  "bundles": [
+    {
+      "symbolicName": "org.idempiere.myappx.plugin.tenant.default",
+      "downloadUrl": "../myappx-plugin-tenant-default/target/org.idempiere.myappx.plugin.tenant.default-14.0.0-SNAPSHOT.jar"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "org.idempiere.myappx.plugin.odt",
+      "version": "14.0.0"
+    }
+  ],
+  "database": [
+    {
+      "id": "postgresql",
+      "version": "17"
+    }
+  ]
+}

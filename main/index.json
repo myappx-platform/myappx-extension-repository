@@ -1,0 +1,178 @@
+{
+  "generatedAt": "2026-10-06T15:27:45.840715Z",
+  "extensions": [
+    {
+      "id": "org.idempiere.myappx.plugin.odt",
+      "name": "MyAppx ObjectData Tool (ODT)",
+      "description": "Structured Application Dictionary packaging, versioning, and install engine for MyAppx plugins.",
+      "categories": [
+        "Platform",
+        "Dictionary"
+      ],
+      "tags": [
+        "odt",
+        "packin",
+        "dictionary",
+        "myappx"
+      ],
+      "entityType": "MYAPPX.ODT",
+      "versions": [
+        {
+          "version": "14.0.0",
+          "metadataUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.odt/14.0.0/metadata.json"
+        }
+      ],
+      "infoUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.odt/info.md",
+      "changeLogUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.odt/CHANGELOG.md"
+    },
+    {
+      "id": "org.idempiere.myappx.plugin.zzz",
+      "name": "MyAppx ZZZ",
+      "description": "System-level tenant customization: role name uniqueness, table validation rules, and ODT/2Pack bootstrap.",
+      "categories": [
+        "Dictionary",
+        "Validation"
+      ],
+      "tags": [
+        "myappx",
+        "zzz",
+        "role",
+        "tenant",
+        "odt"
+      ],
+      "entityType": "MYAPPX.ZZZ",
+      "versions": [
+        {
+          "version": "14.0.0",
+          "metadataUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.zzz/14.0.0/metadata.json"
+        }
+      ],
+      "infoUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.zzz/info.md",
+      "changeLogUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.zzz/CHANGELOG.md"
+    },
+    {
+      "id": "org.idempiere.myappx.plugin.tenant.default",
+      "name": "MyAppx Tenant Default",
+      "description": "Pre-provision Default tenant and Pack-in system/tenant dictionary baseline for MyAppx deployments.",
+      "categories": [
+        "Tenant",
+        "Dictionary"
+      ],
+      "tags": [
+        "myappx",
+        "tenant",
+        "default",
+        "packin",
+        "odt"
+      ],
+      "entityType": "DEFAULT",
+      "versions": [
+        {
+          "version": "14.0.0",
+          "metadataUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.tenant.default/14.0.0/metadata.json"
+        }
+      ],
+      "infoUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.tenant.default/info.md",
+      "changeLogUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.tenant.default/CHANGELOG.md"
+    },
+    {
+      "id": "com.trekglobal.idempiere.rest.api",
+      "name": "iDempiere REST API",
+      "description": "JAX-RS REST API with JWT auth under /api — prerequisite for MCP and AI chat clients.",
+      "categories": [
+        "Platform",
+        "Integration"
+      ],
+      "tags": [
+        "rest",
+        "api",
+        "jwt",
+        "bxservice",
+        "trekglobal"
+      ],
+      "entityType": "REST",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "metadataUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/com.trekglobal.idempiere.rest.api/1.0.0/metadata.json"
+        }
+      ],
+      "infoUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/com.trekglobal.idempiere.rest.api/info.md",
+      "changeLogUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/com.trekglobal.idempiere.rest.api/CHANGELOG.md"
+    },
+    {
+      "id": "org.idempiere.mcp.server",
+      "name": "iDempiere MCP Server",
+      "description": "Model Context Protocol server under /mcp/ for AI tool use; requires iDempiere REST API.",
+      "categories": [
+        "Integration",
+        "AI"
+      ],
+      "tags": [
+        "mcp",
+        "ai",
+        "tools",
+        "hengsin"
+      ],
+      "entityType": "MCP",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "metadataUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.mcp.server/1.0.0/metadata.json"
+        }
+      ],
+      "infoUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.mcp.server/info.md",
+      "changeLogUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.mcp.server/CHANGELOG.md"
+    },
+    {
+      "id": "org.idempiere.myappx.plugin.aic",
+      "name": "iDempiere AI Core",
+      "description": "AI orchestrator with Bedrock/SiliconFlow, MCP tools, desktop Copilot, and /ai chat APIs. Requires ODT, REST, and MCP.",
+      "categories": [
+        "Integration",
+        "AI"
+      ],
+      "tags": [
+        "ai",
+        "copilot",
+        "llm",
+        "bedrock",
+        "siliconflow",
+        "alanlesc1"
+      ],
+      "entityType": "AI",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "metadataUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.aic/1.0.0/metadata.json"
+        }
+      ],
+      "infoUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.aic/info.md",
+      "changeLogUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.aic/CHANGELOG.md"
+    },
+    {
+      "id": "org.idempiere.myappx.plugin.sourcebrowser",
+      "name": "MyAppx Source Browser",
+      "description": "Read-only assembled iDempiere source pack browser (tree, search, Monaco). Optional Copilot jump target.",
+      "categories": [
+        "Developer",
+        "Tools"
+      ],
+      "tags": [
+        "source",
+        "monaco",
+        "myappx",
+        "browser",
+        "odt"
+      ],
+      "entityType": "MYAPPX.SRB",
+      "versions": [
+        {
+          "version": "14.0.0",
+          "metadataUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.sourcebrowser/14.0.0/metadata.json"
+        }
+      ],
+      "infoUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.sourcebrowser/info.md"
+    }
+  ]
+}

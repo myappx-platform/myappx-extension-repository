@@ -1,0 +1,25 @@
+# Maven / Eclipse build output
+/target/
+/bin/
+*.class
+/.flattened-pom.xml
+
+# Plugin JARs copied by publish.py. Catalog text under main/ stays tracked.
+/main/bundles/
+
+# Interrupted publish swap
+/main.staging/
+/main.replaced/
+
+# Legacy root index (catalog index is main/index.json)
+/index.json
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

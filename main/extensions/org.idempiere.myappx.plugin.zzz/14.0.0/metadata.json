@@ -1,0 +1,39 @@
+{
+  "id": "org.idempiere.myappx.plugin.zzz",
+  "version": "14.0.0",
+  "idempiereVersion": "14",
+  "releaseDate": "2026-07-14",
+  "name": "MyAppx ZZZ",
+  "description": "System-level tenant customization: role name uniqueness, table validation rules, and ODT/2Pack bootstrap.",
+  "categories": [
+    "Dictionary",
+    "Validation"
+  ],
+  "tags": [
+    "myappx",
+    "zzz",
+    "role",
+    "tenant",
+    "odt"
+  ],
+  "entityType": "MYAPPX.ZZZ",
+  "bundles": [
+    {
+      "symbolicName": "org.idempiere.myappx.plugin.zzz",
+      "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.zzz_14.0.0.jar",
+      "sha256": "10f26ee21bb80782a89a0452ea0b43bbb7ef4c873575f80823a43e1f70a253a0"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "org.idempiere.myappx.plugin.odt",
+      "version": "14.0.0"
+    }
+  ],
+  "database": [
+    {
+      "id": "postgresql",
+      "version": "17"
+    }
+  ]
+}
