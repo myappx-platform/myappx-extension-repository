@@ -144,13 +144,15 @@ example-plugin|com.example.plugin
 
 Each extension keeps one current version folder, and that folder name must equal `version`. Publish fails when more than one version folder is present.
 
+The Desktop Portal catalog `version` comes from `myappx-desktop-portal/latest.txt` (the desktop client version, for example `6.2.2`). The Maven file stays `org.idempiere.myappx.desktop.portal-14.0.0-SNAPSHOT.jar`. metadata splits those with `versionFile` (`latest.txt`) and `artifactVersion` (`14.0.0`). Before validation, `publish.py` renames the single version folder to the `latest.txt` value and writes the built jar's `Bundle-Version` into the generated `bundles[].version`.
+
 The live inventory is [`extensions.list`](extensions.list). Republish after you change it.
 
 ---
 
 ## 6. Publish workflow
 
-Catalog plugin modules are listed before this module. `mvn clean verify` builds those JARs, then this module's `prepare-package` runs `publish.py` (missing JARs fail the build) and packs `main/` into the bundle. `myappx-plugins/build.bat` is that one command.
+Catalog plugin modules are listed before this module. `myappx-desktop-portal` is one of them: its own `prepare-package` runs `scripts/publish.py` first, copying the installer, `latest.yml`, and download page from `myappx-desktop/release` into the portal, then packages the jar. This module's `prepare-package` then runs the catalog `publish.py` (missing JARs fail the build) and packs `main/` into the bundle. `myappx-plugins/build.bat` is that one command. After a desktop version change, run that build again; the catalog version folder follows `latest.txt`.
 
 ```bat
 cd myappx-plugins
@@ -221,6 +223,8 @@ Suggested `info.md` sections are in [extension-spec.md](extension-spec.md): Summ
 
 Required fields: `id` (equals the directory name), `name`, `version` (equals the version folder name), `idempiereVersion`, `bundles` (at least one entry with `symbolicName`). Each `dependencies[].id` must appear earlier in `extensions.list`. Full constraints: [metadata-schema.json](metadata-schema.json).
 
+When the catalog version and the Maven artifact version differ, set `versionFile` (a module-relative text file whose first line is the catalog version) and `artifactVersion` (the Maven version used to find the jar). The generated `bundles[].version` is the jar manifest `Bundle-Version`. Extension Management uses that value when replacing an installed bundle.
+
 `idempiereVersion` and `dependencies.version` follow [OSGi semantic version ranges](https://docs.osgi.org/whitepaper/semantic-versioning/040-semantic-versions.html).
 
 ---
@@ -243,7 +247,8 @@ python scripts/generate_index.py --base-url http://host:18080/myappx-extension-r
 | Symptom | What to do |
 |---------|------------|
 | Extension Management does not show an extension | Confirm it is in `extensions.list`, run `publish.bat`, package this bundle into the server `plugins/` directory, and confirm the bundle is started |
-| Install fails / JAR cannot be downloaded | Rebuild that module, then republish. The JAR name must be `<symbolicName>-<version>.jar` or the `-SNAPSHOT` form |
+| Install fails / JAR cannot be downloaded | Rebuild that module, then republish. The JAR name must be `<symbolicName>-<version>.jar` or the `-SNAPSHOT` form. For Desktop Portal, `<version>` is `artifactVersion` (`14.0.0`), not the desktop version |
+| Desktop Portal is installed but Update is hidden | Rebuild the portal and the catalog, then replace the catalog jar in the server `plugins/` directory. Extension Management compares the catalog `version` (`latest.txt`). Update stays hidden when the installed version is not lower |
 | URL 404 | Confirm this bundle is installed and started, and `IDEMPIERE_EXTENSION_REPOSITORY` points at its Web-ContextPath |
 | `index.json` order is wrong | Change order in `extensions.list` and republish |
 | Publish reports a dependency order error | Move the dependency earlier in `extensions.list` |

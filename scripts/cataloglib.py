@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import re
+import zipfile
 from pathlib import Path
 
 # Replaced at request time by CatalogBaseUrlFilter. Keep in sync with that class.
@@ -174,6 +175,25 @@ def validate_metadata(extension_id: str, folder_name: str, metadata: dict, earli
                 if not isinstance(item, dict) or not str(item.get("id") or "").strip():
                     errors.append(f"database[{index}].id is required")
 
+    version_file = metadata.get("versionFile")
+    has_version_file = isinstance(version_file, str) and bool(version_file.strip())
+    if version_file is not None and not has_version_file:
+        errors.append("versionFile must be a module-relative path")
+    elif has_version_file:
+        try:
+            version_file_path(version_file.strip())
+        except SystemExit as exc:
+            errors.append(str(exc))
+
+    artifact_version = metadata.get("artifactVersion")
+    has_artifact_version = isinstance(artifact_version, str) and bool(artifact_version.strip())
+    if artifact_version is not None and not has_artifact_version:
+        errors.append("artifactVersion must be a version string")
+    elif has_artifact_version and not VERSION_PATTERN.match(artifact_version.strip()):
+        errors.append(f"artifactVersion {artifact_version!r} does not match {VERSION_PATTERN.pattern}")
+    if has_version_file and not has_artifact_version:
+        errors.append("artifactVersion is required when versionFile is set")
+
     if errors:
         raise SystemExit(where + ": " + "; ".join(errors))
 
@@ -207,6 +227,80 @@ def find_plugin_jar(module_folder: str, extension_id: str, symbolic_name: str, v
             if jar.is_file():
                 return jar
     return None
+
+
+def uses_external_version(metadata: dict) -> bool:
+    """True when the catalog version is not the Maven artifact version."""
+    version_file = metadata.get("versionFile")
+    artifact_version = metadata.get("artifactVersion")
+    return (isinstance(version_file, str) and bool(version_file.strip())) or (
+        isinstance(artifact_version, str) and bool(artifact_version.strip())
+    )
+
+
+def maven_artifact_version(metadata: dict, catalog_version: str) -> str:
+    """Jar file version. Defaults to the catalog version."""
+    artifact_version = metadata.get("artifactVersion")
+    if isinstance(artifact_version, str) and artifact_version.strip():
+        return artifact_version.strip()
+    return catalog_version
+
+
+def version_file_path(relative: str) -> Path:
+    """Return a module-relative path. The caller joins it to the module directory."""
+    rel = Path(relative)
+    if rel.is_absolute() or ".." in rel.parts:
+        raise SystemExit(f"versionFile must stay inside the module: {relative}")
+    return rel
+
+
+def read_declared_version(module_folder: str, extension_id: str, relative: str) -> str:
+    """First line of the module file named by metadata versionFile."""
+    path = (plugins_root() / module_folder / version_file_path(relative)).resolve()
+    module = (plugins_root() / module_folder).resolve()
+    if path != module and module not in path.parents:
+        raise SystemExit(f"{extension_id}: versionFile escapes the module: {relative}")
+    if not path.is_file():
+        raise SystemExit(f"{extension_id}: version file not found: {path}")
+    lines = [line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    if not lines:
+        raise SystemExit(f"{extension_id}: version file is empty: {path}")
+    latest = lines[0]
+    if not VERSION_PATTERN.match(latest):
+        raise SystemExit(f"{extension_id}: {path.name} has invalid version {latest!r}")
+    return latest
+
+
+def release_day_from_module(module_folder: str) -> str | None:
+    """YYYY-MM-DD from the module latest.yml releaseDate, when that feed exists."""
+    path = plugins_root() / module_folder / "latest.yml"
+    if not path.is_file():
+        return None
+    match = re.search(r"^releaseDate:\s*'?(\d{4}-\d{2}-\d{2})", path.read_text(encoding="utf-8"), re.MULTILINE)
+    return match.group(1) if match else None
+
+
+def bundle_version_from_jar(jar_path: Path) -> str:
+    """OSGi Bundle-Version from the jar manifest, including folded header lines."""
+    with zipfile.ZipFile(jar_path) as archive:
+        try:
+            raw = archive.read("META-INF/MANIFEST.MF")
+        except KeyError as exc:
+            raise SystemExit(f"{jar_path.name} has no META-INF/MANIFEST.MF") from exc
+    logical: list[str] = []
+    for line in raw.decode("utf-8", errors="replace").splitlines():
+        if line.strip() == "" and logical:
+            break
+        if line.startswith((" ", "\t")) and logical:
+            logical[-1] += line[1:]
+        else:
+            logical.append(line)
+    for line in logical:
+        if line.startswith("Bundle-Version:"):
+            version = line.split(":", 1)[1].strip()
+            if version:
+                return version
+    raise SystemExit(f"{jar_path.name} manifest has no Bundle-Version")
 
 
 def resolve_base_url(explicit: str | None) -> str:

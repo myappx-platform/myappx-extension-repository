@@ -144,13 +144,15 @@ example-plugin|com.example.plugin
 
 每个扩展只保留一个当前版本目录，目录名必须等于 `version`。多一个版本目录时发布失败。
 
+Desktop Portal 的 catalog `version` 来自 `myappx-desktop-portal/latest.txt`（桌面客户端版本，例如 `6.2.2`）。Maven 包名仍是 `org.idempiere.myappx.desktop.portal-14.0.0-SNAPSHOT.jar`。这两件事在 metadata 里分开写：`versionFile` 指向 `latest.txt`，`artifactVersion` 为 `14.0.0`。`publish.py` 在校验前把唯一的版本目录改成 `latest.txt` 的值，并从打好的 jar 读取 `Bundle-Version`，写入生成的 `bundles[].version`。
+
 当前清单以 [`extensions.list`](extensions.list) 为准，改后须重新发布。
 
 ---
 
 ## 6. 发布流程
 
-清单里的插件模块排在本模块之前。`mvn clean verify` 构建那些 JAR 之后，本模块在 `prepare-package` 运行 `publish.py`（缺少 JAR 即失败），再把 `main/` 打进 bundle。`myappx-plugins/build.bat` 就是这一条命令。
+清单里的插件模块排在本模块之前。`myappx-desktop-portal` 也在本模块之前：它自己的 `prepare-package` 先运行 `scripts/publish.py`，把 `myappx-desktop/release` 里的安装包、`latest.yml` 和下载页刷进 Portal，再打 jar。本模块随后在 `prepare-package` 运行 catalog 的 `publish.py`（缺少 JAR 即失败），把 `main/` 打进 bundle。`myappx-plugins/build.bat` 就是这一条命令。桌面版本变了之后，重新走这条构建，catalog 的版本目录会跟着 `latest.txt` 换掉。
 
 ```bat
 cd myappx-plugins
@@ -221,6 +223,8 @@ python scripts\publish.py --check-inventory
 
 必填字段：`id`（等于目录名）、`name`、`version`（等于版本目录名）、`idempiereVersion`、`bundles`（至少一项，含 `symbolicName`）。`dependencies[].id` 必须出现在 `extensions.list` 更前面。完整约束见 [metadata-schema.json](metadata-schema.json)。
 
+catalog 版本和 Maven 包版本不一致时，加上 `versionFile`（模块内文本文件，第一行是 catalog 版本）和 `artifactVersion`（用来找 jar 的 Maven 版本）。发布生成的 `bundles[].version` 取 jar 清单里的 `Bundle-Version`，Extension Management 用它判断能否替换已安装的 bundle。
+
 `idempiereVersion` 与 `dependencies.version` 使用 [OSGi 语义版本范围](https://docs.osgi.org/whitepaper/semantic-versioning/040-semantic-versions.html)。
 
 ---
@@ -243,7 +247,8 @@ python scripts/generate_index.py --base-url http://host:18080/myappx-extension-r
 | 现象 | 处理 |
 |------|------|
 | Extension Management 看不到某扩展 | 确认已在 `extensions.list`，已 `publish.bat`，已打包本 bundle 并放入服务器 `plugins/`，且 bundle 已启动 |
-| 安装失败 / 无法下载 JAR | 重新构建对应模块后再发布。JAR 名必须是 `<symbolicName>-<version>.jar` 或带 `-SNAPSHOT` |
+| 安装失败 / 无法下载 JAR | 重新构建对应模块后再发布。JAR 名必须是 `<symbolicName>-<version>.jar` 或带 `-SNAPSHOT`。Desktop Portal 的 `<version>` 是 `artifactVersion`（`14.0.0`），不是桌面版本 |
+| 桌面门户已安装但没有「更新」 | 重新构建 Portal 与 catalog，并换上服务器 `plugins/` 里的 catalog jar。Extension Management 比较 catalog `version`（`latest.txt`）。已安装版本不小于该值时不显示更新 |
 | URL 404 | 确认本 bundle 已安装并已启动，且 `IDEMPIERE_EXTENSION_REPOSITORY` 指向它的 Web-ContextPath |
 | `index.json` 顺序不对 | 调整 `extensions.list` 顺序后重新发布 |
 | 发布报依赖顺序错误 | 把被依赖的扩展移到 `extensions.list` 更前面 |

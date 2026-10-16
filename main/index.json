@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-15T13:40:18.180528Z",
+  "generatedAt": "2026-10-16T09:05:54.600236Z",
   "extensions": [
     {
       "id": "org.idempiere.myappx.plugin.odt",
@@ -126,7 +126,7 @@
     },
     {
       "id": "org.idempiere.myappx.plugin.aic",
-      "name": "iDempiere AI Core",
+      "name": "iDempiere AI Copilot",
       "description": "AI orchestrator with Bedrock/SiliconFlow, MCP tools, desktop Copilot, and /ai chat APIs. Requires ODT, REST, and MCP.",
       "categories": [
         "Integration",
@@ -173,6 +173,29 @@
         }
       ],
       "infoUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.plugin.sourcebrowser/info.md"
+    },
+    {
+      "id": "org.idempiere.myappx.desktop.portal",
+      "name": "MyAppx Desktop Portal",
+      "description": "Download page and electron-updater feed for the MyAppx Desktop client at /desktop/.",
+      "categories": [
+        "Desktop",
+        "Client"
+      ],
+      "tags": [
+        "desktop",
+        "electron",
+        "updater",
+        "myappx"
+      ],
+      "entityType": "MYAPPX.DESKTOP",
+      "versions": [
+        {
+          "version": "6.2.2",
+          "metadataUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.desktop.portal/6.2.2/metadata.json"
+        }
+      ],
+      "infoUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.desktop.portal/info.md"
     }
   ]
 }

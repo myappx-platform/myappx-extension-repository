@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "idempiereVersion": "14",
   "releaseDate": "2026-09-02",
-  "name": "iDempiere AI Core",
+  "name": "iDempiere AI Copilot",
   "description": "AI orchestrator with Bedrock/SiliconFlow, MCP tools, desktop Copilot, and /ai chat APIs. Requires ODT, REST, and MCP.",
   "categories": [
     "Integration",

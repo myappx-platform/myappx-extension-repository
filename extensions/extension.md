@@ -18,3 +18,5 @@ com.example.extension.name/
 - assets: Static assets (image, csv, etc)
 - 1.0.0: The single current version folder
 - metadata.json: Technical metadata & bundle links
+
+Desktop Portal keeps that one folder in sync with `myappx-desktop-portal/latest.txt`. `publish.py` renames it when the desktop feed version changes. The Maven jar name stays on `artifactVersion`.

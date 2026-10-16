@@ -1,0 +1,29 @@
+{
+  "id": "org.idempiere.myappx.desktop.portal",
+  "version": "6.2.2",
+  "versionFile": "latest.txt",
+  "artifactVersion": "14.0.0",
+  "idempiereVersion": "14",
+  "releaseDate": "2026-10-15",
+  "name": "MyAppx Desktop Portal",
+  "description": "Download page and electron-updater feed for the MyAppx Desktop client at /desktop/.",
+  "categories": [
+    "Desktop",
+    "Client"
+  ],
+  "tags": [
+    "desktop",
+    "electron",
+    "updater",
+    "myappx"
+  ],
+  "entityType": "MYAPPX.DESKTOP",
+  "bundles": [
+    {
+      "symbolicName": "org.idempiere.myappx.desktop.portal",
+      "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.desktop.portal_6.2.2.jar",
+      "sha256": "e6b8f1368a85498353e445a2edfd1b790bfc3e5eb06371b6f6bbbeb34c1b1f3f",
+      "version": "14.0.0.202610160903"
+    }
+  ]
+}

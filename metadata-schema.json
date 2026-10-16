@@ -42,6 +42,14 @@
       "type": "string",
       "description": "Identifies the type of entity, often matching the ID or a specific extension class."
     },
+    "versionFile": {
+      "type": "string",
+      "description": "Module-relative text file. Its first line is the catalog version. publish.py renames the single version folder to match before packing the catalog."
+    },
+    "artifactVersion": {
+      "type": "string",
+      "description": "Maven artifact version used to find the jar when it differs from the catalog version. Required when versionFile is set."
+    },
     "bundles": {
       "type": "array",
       "minItems": 1,
@@ -50,6 +58,10 @@
         "required": ["symbolicName"],
         "properties": {
           "symbolicName": { "type": "string" },
+          "version": {
+            "type": "string",
+            "description": "OSGi Bundle-Version installed with this jar. When versionFile or artifactVersion is set, publish.py writes the value from the jar manifest."
+          },
           "downloadUrl": { "type": "string", "format": "uri" },
           "sha256": { "type": "string" }
         }

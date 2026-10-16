@@ -20,7 +20,7 @@
     {
       "symbolicName": "org.idempiere.myappx.plugin.odt",
       "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.odt_14.0.0.jar",
-      "sha256": "7c0e966cb87e6b126c6d2f118a07442a064f2a4d6ec3bd110f0aadf69efe30f6"
+      "sha256": "06d20728520f86130720987c5022181fad1b09a6aed47f9dc3175954a089d0ed"
     }
   ],
   "dependencies": [],

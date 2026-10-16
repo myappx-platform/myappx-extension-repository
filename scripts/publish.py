@@ -20,13 +20,19 @@ from pathlib import Path
 from cataloglib import (
     CATALOG_BASE_PLACEHOLDER,
     assert_extensions_inventory_1to1,
+    bundle_version_from_jar,
     current_version,
     find_plugin_jar,
     load_metadata,
+    maven_artifact_version,
     parse_extensions_list,
+    read_declared_version,
+    release_day_from_module,
     repo_root,
     resolve_base_url,
+    uses_external_version,
     validate_metadata,
+    version_dirs,
 )
 from generate_index import generate_index
 
@@ -72,23 +78,76 @@ def replace_directory(staging: Path, dest: Path) -> None:
         shutil.rmtree(backup)
 
 
+def sync_external_versions(root: Path, entries: list[tuple[str, str]]) -> None:
+    """Move a versionFile extension's single version folder to the file's version."""
+    for module_folder, extension_id in entries:
+        ext_dir = root / "extensions" / extension_id
+        versions = version_dirs(ext_dir)
+        if len(versions) != 1:
+            continue
+        folder = versions[0]
+        metadata_path = ext_dir / folder / "metadata.json"
+        metadata = load_metadata(metadata_path)
+        version_file = metadata.get("versionFile")
+        if not isinstance(version_file, str) or not version_file.strip():
+            continue
+        latest = read_declared_version(module_folder, extension_id, version_file.strip())
+        release_date = release_day_from_module(module_folder)
+        date_differs = bool(release_date) and metadata.get("releaseDate") != release_date
+        if metadata.get("version") == latest and folder == latest and not date_differs:
+            continue
+        metadata["version"] = latest
+        if release_date:
+            metadata["releaseDate"] = release_date
+        dest_dir = ext_dir / latest
+        if folder != latest and dest_dir.exists():
+            raise SystemExit(
+                f"{extension_id}: cannot move version folder {folder} to {latest}; {latest} already exists"
+            )
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        (dest_dir / "metadata.json").write_text(
+            json.dumps(metadata, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        if folder != latest:
+            shutil.rmtree(ext_dir / folder)
+        print(f"[OK] {extension_id} catalog version {latest}")
+
+
+def assert_external_version_current(module_folder: str, extension_id: str, folder: str, metadata: dict) -> None:
+    version_file = metadata.get("versionFile")
+    if not isinstance(version_file, str) or not version_file.strip():
+        return
+    latest = read_declared_version(module_folder, extension_id, version_file.strip())
+    if folder != latest or metadata.get("version") != latest:
+        raise SystemExit(
+            f"{extension_id}: catalog version {folder} != {version_file.strip()} ({latest}). "
+            "Run publish.py so the version folder follows the desktop feed."
+        )
+
+
 def check_inventory(root: Path) -> list[tuple[str, str]]:
     list_path = root / "extensions.list"
     if not list_path.is_file():
         raise SystemExit(f"Missing {list_path}")
     entries = parse_extensions_list(list_path)
     assert_extensions_inventory_1to1(root, entries)
-    for index, (_module_folder, extension_id) in enumerate(entries):
+    for index, (module_folder, extension_id) in enumerate(entries):
         earlier = {eid for _, eid in entries[:index]}
         src_ext = root / "extensions" / extension_id
         version = current_version(src_ext, extension_id)
         metadata = load_metadata(src_ext / version / "metadata.json")
+        assert_external_version_current(module_folder, extension_id, version, metadata)
         validate_metadata(extension_id, version, metadata, earlier)
     return entries
 
 
 def publish(base_url: str) -> None:
     root = repo_root()
+    list_path = root / "extensions.list"
+    if not list_path.is_file():
+        raise SystemExit(f"Missing {list_path}")
+    sync_external_versions(root, parse_extensions_list(list_path))
     entries = check_inventory(root)
     recover_failed_replace(root / "main")
 
@@ -101,14 +160,17 @@ def publish(base_url: str) -> None:
         metadata = load_metadata(src_ext / version / "metadata.json")
         validate_metadata(extension_id, version, metadata, earlier)
         jars: dict[str, Path] = {}
+        artifact_version = maven_artifact_version(metadata, version)
         for bundle in metadata["bundles"]:
             symbolic_name = str(bundle["symbolicName"]).strip()
-            jar_src = find_plugin_jar(module_folder, extension_id, symbolic_name, version)
+            jar_src = find_plugin_jar(module_folder, extension_id, symbolic_name, artifact_version)
             if jar_src is None:
+                catalog_note = f"; catalog version is {version}" if artifact_version != version else ""
                 missing_jars.append(
                     f"{extension_id} {version} ({symbolic_name}): expected "
-                    f"{symbolic_name}-{version}.jar or {symbolic_name}-{version}-SNAPSHOT.jar "
+                    f"{symbolic_name}-{artifact_version}.jar or {symbolic_name}-{artifact_version}-SNAPSHOT.jar "
                     f"under {module_folder}/target or {module_folder}/{symbolic_name}/target"
+                    f"{catalog_note}"
                 )
             else:
                 jars[symbolic_name] = jar_src
@@ -159,6 +221,8 @@ def publish(base_url: str) -> None:
                 dst_jar = bundles_dir / bundle_name
                 shutil.copy2(jar_src, dst_jar)
                 bundle["sha256"] = sha256_file(dst_jar)
+                if uses_external_version(item["metadata"]):
+                    bundle["version"] = bundle_version_from_jar(dst_jar)
                 print(f"[OK] Bundle {bundle_name} <= {jar_src.name}")
             (dst_version / "metadata.json").write_text(
                 json.dumps(metadata, indent=2, ensure_ascii=False) + "\n",
