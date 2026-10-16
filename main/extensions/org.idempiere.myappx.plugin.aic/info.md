@@ -1,4 +1,4 @@
-# iDempiere AI Core
+# iDempiere AI Copilot
 
 **Summary:** Central AI orchestrator for iDempiere — LLM providers (Bedrock / SiliconFlow), MCP tool use, desktop Context AI Copilot, and chat APIs under `/ai`.
 
