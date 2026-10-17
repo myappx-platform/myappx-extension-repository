@@ -4,7 +4,7 @@
   "versionFile": "latest.txt",
   "artifactVersion": "14.0.0",
   "idempiereVersion": "14",
-  "releaseDate": "2026-10-16",
+  "releaseDate": "2026-10-17",
   "name": "MyAppx Desktop Portal",
   "description": "Download page and electron-updater feed for the MyAppx Desktop client at /desktop/.",
   "categories": [
