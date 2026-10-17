@@ -22,8 +22,8 @@
     {
       "symbolicName": "org.idempiere.myappx.desktop.portal",
       "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.desktop.portal_6.2.2.jar",
-      "sha256": "0ebd8e7bb52674a06db42462ab4c86685129cd9cf3c4c5c5463dcd47414fb244",
-      "version": "14.0.0.202610170321"
+      "sha256": "d00fcaa770f28731417e9fec0e9f1dc73f930d5131aac0a9715c0d6e3298b553",
+      "version": "14.0.0.202610170859"
     }
   ]
 }

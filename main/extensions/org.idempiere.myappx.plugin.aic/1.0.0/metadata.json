@@ -22,7 +22,7 @@
     {
       "symbolicName": "org.idempiere.myappx.plugin.aic",
       "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.aic_1.0.0.jar",
-      "sha256": "4d74c633cc0e5bfb096b39201deb17f822d053c8aead52f39af3d048278e7621"
+      "sha256": "5eb4685379a67b3bdd7d70f08e2a66da4f62189c90f3a87d782ba0ead5abfdbc"
     }
   ],
   "dependencies": [
