@@ -1,0 +1,6 @@
+instructions.configure = \
+setStartLevel(startLevel:4); \
+markStarted(started: true);
+instructions.unconfigure = \
+setStartLevel(startLevel:-1); \
+markStarted(started: false);

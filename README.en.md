@@ -2,9 +2,9 @@
 
 **Language:** English | [中文](README.md)
 
-Extension catalog for **MyAppx / iDempiere 14**. This project is the OSGi web bundle `org.idempiere.myappx.extension.repository` and serves the catalog over HTTP to **Extension Management**.
+Extension catalog for **MyAppx / iDempiere 14**. The OSGi web bundle `org.idempiere.myappx.extension.repository` serves the catalog over HTTP to **Extension Management**. The p2 module in this repository publishes that bundle as an installable site.
 
-Spec: [extension-spec.md](extension-spec.md) · Schema: [metadata-schema.json](metadata-schema.json)  
+Spec: [extension-spec.md](org.idempiere.myappx.extension.repository/extension-spec.md) · Schema: [metadata-schema.json](org.idempiere.myappx.extension.repository/metadata-schema.json)  
 Upstream layout: [iDempiere Extension Repository](https://github.com/idempiere/idempiere-extension-repository)
 
 | Item | Value |
@@ -13,10 +13,10 @@ Upstream layout: [iDempiere Extension Repository](https://github.com/idempiere/i
 | Bundle | `org.idempiere.myappx.extension.repository` |
 | Web-ContextPath | `/myappx-extension-repository` |
 | Default base URL | `http://127.0.0.1:18080/myappx-extension-repository` |
-| Inventory / install order | [`extensions.list`](extensions.list) |
+| Inventory / install order | [`extensions.list`](org.idempiere.myappx.extension.repository/extensions.list) |
 | Source metadata | `extensions/<Bundle-SymbolicName>/` (1:1 with list) |
 | Generated catalog | `main/` (`index.json`, extensions, bundles), packed into this bundle |
-| Deploy | Copy this bundle into the server `plugins/` directory |
+| Deploy | [`p2-install.bat`](p2-install.bat) installs it with the p2 director |
 | JVM property | `-DIDEMPIERE_EXTENSION_REPOSITORY=...` |
 | Web UI | **System Admin → Extension Management** |
 
@@ -43,7 +43,7 @@ Upstream layout: [iDempiere Extension Repository](https://github.com/idempiere/i
 
 Extension Management reads this catalog to list installable extensions (name, version, dependencies) and downloads JARs from each `downloadUrl`.
 
-This bundle serves the catalog from its `Web-ContextPath`. The catalog is not packed into `org.adempiere.server`. [`extensions.list`](extensions.list) is the single source of truth: only listed extensions are published, and list order is the install order (dependencies first). `extensions/` must be **1:1** with the list. Removing an extension deletes it from both the list and `extensions/`.
+This bundle serves the catalog from its `Web-ContextPath`. The catalog is not packed into `org.adempiere.server`. [`extensions.list`](org.idempiere.myappx.extension.repository/extensions.list) is the single source of truth: only listed extensions are published, and list order is the install order (dependencies first). `extensions/` must be **1:1** with the list. Removing an extension deletes it from both the list and `extensions/`.
 
 This bundle is platform infrastructure. Do not add it to `extensions.list`. It serves the catalog, so Extension Management cannot install it.
 
@@ -53,26 +53,21 @@ This bundle is platform infrastructure. Do not add it to `extensions.list`. It s
 
 ```text
 myappx-extension-repository/
-├── META-INF/MANIFEST.MF          # Web-ContextPath: /myappx-extension-repository
-├── WEB-INF/web.xml               # DefaultServlet, dirAllowed=false
-├── extensions.list               # Inventory + install order (source of truth)
-├── extensions/                   # Source metadata; 1:1 with the list; not packed
-│   └── <Bundle-SymbolicName>/
-│       ├── info.md
-│       ├── CHANGELOG.md          # optional
-│       ├── assets/               # optional
-│       └── <version>/
-│           └── metadata.json
-├── scripts/
-│   ├── publish.py                # Build main/
-│   └── generate_index.py         # Build index.json
-├── publish.bat                   # Local catalog
-├── main/                         # Generated HTTP catalog (packed into the bundle)
-│   ├── index.json
-│   ├── extensions/
-│   └── bundles/*.jar             # gitignored; copied from Maven target on publish
-├── extension-spec.md
-└── metadata-schema.json
+├── pom.xml                       # aggregator: bundle + p2
+├── p2-install.bat                # install the bundle with the p2 director
+├── org.idempiere.myappx.extension.repository/          # this web bundle
+│   ├── META-INF/MANIFEST.MF      # Web-ContextPath: /myappx-extension-repository
+│   ├── WEB-INF/web.xml           # DefaultServlet, dirAllowed=false
+│   ├── extensions.list           # Inventory + install order (source of truth)
+│   ├── extensions/               # Source metadata; 1:1 with the list; not packed
+│   ├── scripts/                  # publish.py, generate_index.py
+│   ├── publish.bat               # Local catalog
+│   ├── main/                     # Generated HTTP catalog (packed into the bundle)
+│   ├── extension-spec.md
+│   └── metadata-schema.json
+└── org.idempiere.myappx.extension.repository.p2/       # p2 site
+    ├── category.xml              # IU: org.idempiere.myappx.extension.repository
+    └── target/repository/        # build output; p2-install.bat points here
 ```
 
 `build.properties` packs `META-INF/`, `WEB-INF/web.xml`, `main/`, and `.` (compiled classes, including the catalog URL filter). README, scripts, and `extensions/` are not in `bin.includes`, so this web path does not serve them.
@@ -146,7 +141,7 @@ Each extension keeps one current version folder, and that folder name must equal
 
 The Desktop Portal catalog `version` comes from `myappx-desktop-portal/latest.txt` (the desktop client version, for example `6.2.2`). The Maven file stays `org.idempiere.myappx.desktop.portal-14.0.0-SNAPSHOT.jar`. metadata splits those with `versionFile` (`latest.txt`) and `artifactVersion` (`14.0.0`). Before validation, `publish.py` renames the single version folder to the `latest.txt` value and writes the built jar's `Bundle-Version` into the generated `bundles[].version`.
 
-The live inventory is [`extensions.list`](extensions.list). Republish after you change it.
+The live inventory is [`extensions.list`](org.idempiere.myappx.extension.repository/extensions.list). Republish after you change it.
 
 ---
 
@@ -159,18 +154,25 @@ cd myappx-plugins
 mvn -Drevision=14.0.0-SNAPSHOT clean verify
 ```
 
-To refresh the catalog when the plugin JARs are already in each module `target/`:
+To refresh the catalog when the plugin JARs are already in each module `target/`, publish from the bundle directory, then package the bundle and the p2 site from this directory:
+
+```bat
+cd myappx-extension-repository\org.idempiere.myappx.extension.repository
+publish.bat
+cd ..
+mvn -Drevision=14.0.0-SNAPSHOT package
+```
+
+That `package` publishes again and writes `org.idempiere.myappx.extension.repository.p2\target\repository`. Add `-Dmyappx.skip.catalog.publish=true` when `publish.bat` has just written `main/`.
+
+Stop the server, then install with the p2 director (uninstall, then install):
 
 ```bat
 cd myappx-extension-repository
-publish.bat
-cd ..
-mvn -Drevision=14.0.0-SNAPSHOT -pl myappx-extension-repository package
+p2-install.bat C:\path\to\appxserver
 ```
 
-That `package` publishes again. Add `-Dmyappx.skip.catalog.publish=true` when `publish.bat` has just written `main/`.
-
-Put `myappx-extension-repository/target/org.idempiere.myappx.extension.repository-*.jar` into a new server instance `plugins/` directory, set `IDEMPIERE_EXTENSION_REPOSITORY`, then start the server.
+The argument is the server directory that contains `plugins\org.eclipse.equinox.launcher_1.*.jar`. Set `IDEMPIERE_EXTENSION_REPOSITORY`, then start the server.
 
 Publish writes the complete tree under `main.staging/` and replaces `main/` only after that succeeds. SHA-256 is computed from the copied JAR.
 
@@ -179,6 +181,8 @@ On Windows, renaming a directory fails with `WinError 5` (access denied) while a
 ---
 
 ## 7. Scripts and options
+
+From `org.idempiere.myappx.extension.repository`:
 
 ```bat
 publish.bat                              write main/; a missing JAR or extra version folder fails and leaves main/ unchanged
@@ -215,7 +219,7 @@ python scripts\publish.py --check-inventory
 2. Delete `extensions/<id>/`.
 3. Republish and repackage. The generated catalog no longer includes that extension.
 
-Suggested `info.md` sections are in [extension-spec.md](extension-spec.md): Summary, Features, Compatibility, Database Changes, Usage & Configuration, Author/Support.
+Suggested `info.md` sections are in [extension-spec.md](org.idempiere.myappx.extension.repository/extension-spec.md): Summary, Features, Compatibility, Database Changes, Usage & Configuration, Author/Support.
 
 ---
 
@@ -223,7 +227,7 @@ Suggested `info.md` sections are in [extension-spec.md](extension-spec.md): Summ
 
 `downloadUrl` / `sha256` in **source** metadata are overwritten by `publish.py` in `main/`. Source files may keep a relative Maven artifact path for local reference.
 
-Required fields: `id` (equals the directory name), `name`, `version` (equals the version folder name), `idempiereVersion`, `bundles` (at least one entry with `symbolicName`). Each `dependencies[].id` must appear earlier in `extensions.list`. Full constraints: [metadata-schema.json](metadata-schema.json).
+Required fields: `id` (equals the directory name), `name`, `version` (equals the version folder name), `idempiereVersion`, `bundles` (at least one entry with `symbolicName`). Each `dependencies[].id` must appear earlier in `extensions.list`. Full constraints: [metadata-schema.json](org.idempiere.myappx.extension.repository/metadata-schema.json).
 
 When the catalog version and the Maven artifact version differ, set `versionFile` (a module-relative text file whose first line is the catalog version) and `artifactVersion` (the Maven version used to find the jar). The generated `bundles[].version` is the jar manifest `Bundle-Version`. Extension Management uses that value when replacing an installed bundle.
 
@@ -248,7 +252,7 @@ python scripts/generate_index.py --base-url http://host:18080/myappx-extension-r
 
 | Symptom | What to do |
 |---------|------------|
-| Extension Management does not show an extension | Confirm it is in `extensions.list`, run `publish.bat`, package this bundle into the server `plugins/` directory, and confirm the bundle is started |
+| Extension Management does not show an extension | Confirm it is in `extensions.list`, run `publish.bat`, install this bundle with `p2-install.bat`, and confirm the bundle is started |
 | Install fails / JAR cannot be downloaded | Rebuild that module, then republish. The JAR name must be `<symbolicName>-<version>.jar` or the `-SNAPSHOT` form. For Desktop Portal, `<version>` is `artifactVersion` (`14.0.0`), not the desktop version |
 | Desktop Portal is installed but Update is hidden | Rebuild the portal and the catalog, then replace the catalog jar in the server `plugins/` directory. Extension Management compares the catalog `version` (`latest.txt`). Update stays hidden when the installed version is not lower |
 | URL 404 | Confirm this bundle is installed and started, and `IDEMPIERE_EXTENSION_REPOSITORY` points at its Web-ContextPath |
@@ -263,7 +267,7 @@ python scripts/generate_index.py --base-url http://host:18080/myappx-extension-r
 
 | Doc | Purpose |
 |-----|---------|
-| [extension-spec.md](extension-spec.md) | Catalog conventions, `info.md` and metadata examples |
-| [metadata-schema.json](metadata-schema.json) | metadata JSON Schema |
-| [extensions/extension.md](extensions/extension.md) | Source folder layout |
-| [`extensions.list`](extensions.list) | Publish inventory and install order |
+| [extension-spec.md](org.idempiere.myappx.extension.repository/extension-spec.md) | Catalog conventions, `info.md` and metadata examples |
+| [metadata-schema.json](org.idempiere.myappx.extension.repository/metadata-schema.json) | metadata JSON Schema |
+| [extensions/extension.md](org.idempiere.myappx.extension.repository/extensions/extension.md) | Source folder layout |
+| [`extensions.list`](org.idempiere.myappx.extension.repository/extensions.list) | Publish inventory and install order |

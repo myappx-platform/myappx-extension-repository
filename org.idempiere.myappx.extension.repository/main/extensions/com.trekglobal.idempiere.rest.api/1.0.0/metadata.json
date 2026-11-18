@@ -1,0 +1,37 @@
+{
+  "id": "com.trekglobal.idempiere.rest.api",
+  "version": "1.0.0",
+  "idempiereVersion": "14",
+  "releaseDate": "2026-07-26",
+  "name": "iDempiere REST API",
+  "description": "JAX-RS REST API with JWT auth under /api — prerequisite for MCP and AI chat clients.",
+  "categories": [
+    "Platform",
+    "Integration"
+  ],
+  "tags": [
+    "rest",
+    "api",
+    "jwt",
+    "bxservice",
+    "trekglobal"
+  ],
+  "entityType": "REST",
+  "bundles": [
+    {
+      "symbolicName": "com.trekglobal.idempiere.rest.api",
+      "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/com.trekglobal.idempiere.rest.api_1.0.0.jar",
+      "sha256": "cae560aa2f2a39ae7bec45213fda8abdcbc07988d2796752c10794fb8975e8d4"
+    }
+  ],
+  "dependencies": [],
+  "database": [
+    {
+      "id": "postgresql",
+      "version": "17"
+    },
+    {
+      "id": "oracle"
+    }
+  ]
+}

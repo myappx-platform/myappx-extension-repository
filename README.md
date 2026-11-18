@@ -2,9 +2,9 @@
 
 **语言 / Language:** 中文 | [English](README.en.md)
 
-MyAppx / iDempiere **14** 的扩展目录（catalog）。本目录本身是 OSGi Web bundle `org.idempiere.myappx.extension.repository`，经 HTTP 提供给 **Extension Management**。
+MyAppx / iDempiere **14** 的扩展目录（catalog）。OSGi Web bundle `org.idempiere.myappx.extension.repository` 经 HTTP 提供给 **Extension Management**。同仓库的 p2 模块把它发布成可安装站点。
 
-规范：[extension-spec.md](extension-spec.md) · Schema：[metadata-schema.json](metadata-schema.json)  
+规范：[extension-spec.md](org.idempiere.myappx.extension.repository/extension-spec.md) · Schema：[metadata-schema.json](org.idempiere.myappx.extension.repository/metadata-schema.json)  
 上游布局：[iDempiere Extension Repository](https://github.com/idempiere/idempiere-extension-repository)
 
 | 项目 | 说明 |
@@ -13,10 +13,10 @@ MyAppx / iDempiere **14** 的扩展目录（catalog）。本目录本身是 OSGi
 | Bundle | `org.idempiere.myappx.extension.repository` |
 | Web-ContextPath | `/myappx-extension-repository` |
 | 默认基址 | `http://127.0.0.1:18080/myappx-extension-repository` |
-| 清单 / 安装顺序 | [`extensions.list`](extensions.list) |
+| 清单 / 安装顺序 | [`extensions.list`](org.idempiere.myappx.extension.repository/extensions.list) |
 | 源 metadata | `extensions/<Bundle-SymbolicName>/`（与 list 1:1） |
 | 生成物 | `main/`（`index.json`、extensions、bundles），打进本 bundle |
-| 部署 | 将本 bundle 放入服务器 `plugins/` |
+| 部署 | [`p2-install.bat`](p2-install.bat) 用 p2 director 装进服务器 |
 | JVM 属性 | `-DIDEMPIERE_EXTENSION_REPOSITORY=...` |
 | Web UI | **System Admin → Extension Management** |
 
@@ -43,7 +43,7 @@ MyAppx / iDempiere **14** 的扩展目录（catalog）。本目录本身是 OSGi
 
 Extension Management 从 catalog 读取可安装扩展：列出名称、版本、依赖，并按 `downloadUrl` 拉取 JAR。
 
-catalog 由本 bundle 的 `Web-ContextPath` 提供，不打进 `org.adempiere.server`。[`extensions.list`](extensions.list) 是唯一真相：只发布其中列出的扩展，行顺序即安装顺序（依赖在前）。`extensions/` 与清单必须 **1:1**。下架时从清单和 `extensions/` 一起删除。
+catalog 由本 bundle 的 `Web-ContextPath` 提供，不打进 `org.adempiere.server`。[`extensions.list`](org.idempiere.myappx.extension.repository/extensions.list) 是唯一真相：只发布其中列出的扩展，行顺序即安装顺序（依赖在前）。`extensions/` 与清单必须 **1:1**。下架时从清单和 `extensions/` 一起删除。
 
 本 bundle 是平台组件，不要写进 `extensions.list`。目录由它自己提供，不能再靠 Extension Management 安装自己。
 
@@ -53,26 +53,21 @@ catalog 由本 bundle 的 `Web-ContextPath` 提供，不打进 `org.adempiere.se
 
 ```text
 myappx-extension-repository/
-├── META-INF/MANIFEST.MF          # Web-ContextPath: /myappx-extension-repository
-├── WEB-INF/web.xml               # DefaultServlet，dirAllowed=false
-├── extensions.list               # 清单 + 安装顺序（唯一真相）
-├── extensions/                   # 源 metadata；必须与 list 1:1；不打进 bundle
-│   └── <Bundle-SymbolicName>/
-│       ├── info.md
-│       ├── CHANGELOG.md          # 可选
-│       ├── assets/               # 可选
-│       └── <version>/
-│           └── metadata.json
-├── scripts/
-│   ├── publish.py                # 生成 main/
-│   └── generate_index.py         # 生成 index.json
-├── publish.bat                   # 生成本地 catalog
-├── main/                         # 生成的 HTTP catalog（打进 bundle）
-│   ├── index.json
-│   ├── extensions/
-│   └── bundles/*.jar             # gitignore，发布时从 Maven target 复制
-├── extension-spec.md
-└── metadata-schema.json
+├── pom.xml                       # 聚合：bundle + p2
+├── p2-install.bat                # 用 p2 director 把 bundle 装进服务器
+├── org.idempiere.myappx.extension.repository/          # 当前 Web bundle
+│   ├── META-INF/MANIFEST.MF      # Web-ContextPath: /myappx-extension-repository
+│   ├── WEB-INF/web.xml           # DefaultServlet，dirAllowed=false
+│   ├── extensions.list           # 清单 + 安装顺序（唯一真相）
+│   ├── extensions/               # 源 metadata；必须与 list 1:1；不打进 bundle
+│   ├── scripts/                  # publish.py、generate_index.py
+│   ├── publish.bat               # 生成本地 catalog
+│   ├── main/                     # 生成的 HTTP catalog（打进 bundle）
+│   ├── extension-spec.md
+│   └── metadata-schema.json
+└── org.idempiere.myappx.extension.repository.p2/       # p2 站点
+    ├── category.xml              # IU: org.idempiere.myappx.extension.repository
+    └── target/repository/        # 构建产物，p2-install.bat 指向这里
 ```
 
 `build.properties` 把 `META-INF/`、`WEB-INF/web.xml`、`main/` 和 `.`（编译后的类，含 catalog URL 过滤器）打进 bundle。README、脚本和 `extensions/` 不在 `bin.includes` 里，不会被这个 Web 路径直接下载。
@@ -146,7 +141,7 @@ example-plugin|com.example.plugin
 
 Desktop Portal 的 catalog `version` 来自 `myappx-desktop-portal/latest.txt`（桌面客户端版本，例如 `6.2.2`）。Maven 包名仍是 `org.idempiere.myappx.desktop.portal-14.0.0-SNAPSHOT.jar`。这两件事在 metadata 里分开写：`versionFile` 指向 `latest.txt`，`artifactVersion` 为 `14.0.0`。`publish.py` 在校验前把唯一的版本目录改成 `latest.txt` 的值，并从打好的 jar 读取 `Bundle-Version`，写入生成的 `bundles[].version`。
 
-当前清单以 [`extensions.list`](extensions.list) 为准，改后须重新发布。
+当前清单以 [`extensions.list`](org.idempiere.myappx.extension.repository/extensions.list) 为准，改后须重新发布。
 
 ---
 
@@ -159,18 +154,25 @@ cd myappx-plugins
 mvn -Drevision=14.0.0-SNAPSHOT clean verify
 ```
 
-只刷新 catalog、JAR 已经在各模块 `target/` 时：
+只刷新 catalog、JAR 已经在各模块 `target/` 时，在 bundle 目录里发布，再回到本目录打出 bundle 和 p2 站点：
+
+```bat
+cd myappx-extension-repository\org.idempiere.myappx.extension.repository
+publish.bat
+cd ..
+mvn -Drevision=14.0.0-SNAPSHOT package
+```
+
+上面的 `package` 会再发布一次，并生成 `org.idempiere.myappx.extension.repository.p2\target\repository`。若 `main/` 刚刚由 `publish.bat` 写好，加上 `-Dmyappx.skip.catalog.publish=true` 可跳过第二次发布。
+
+停掉服务器后，用 p2 director 安装（先卸再装）：
 
 ```bat
 cd myappx-extension-repository
-publish.bat
-cd ..
-mvn -Drevision=14.0.0-SNAPSHOT -pl myappx-extension-repository package
+p2-install.bat C:\path\to\appxserver
 ```
 
-上面的 `package` 会再发布一次。若 `main/` 刚刚由 `publish.bat` 写好，加上 `-Dmyappx.skip.catalog.publish=true` 可跳过第二次。
-
-把 `myappx-extension-repository/target/org.idempiere.myappx.extension.repository-*.jar` 放进新服务器实例的 `plugins/`，设置 `IDEMPIERE_EXTENSION_REPOSITORY`，然后启动。
+`p2-install.bat` 的参数是含 `plugins\org.eclipse.equinox.launcher_1.*.jar` 的服务器目录。装好后设置 `IDEMPIERE_EXTENSION_REPOSITORY`，然后启动。
 
 发布先在 `main.staging/` 写完整棵目录，成功后再替换 `main/`。JAR 的 SHA-256 来自本次复制的文件。
 
@@ -179,6 +181,8 @@ mvn -Drevision=14.0.0-SNAPSHOT -pl myappx-extension-repository package
 ---
 
 ## 7. 脚本与选项
+
+在 `org.idempiere.myappx.extension.repository` 目录中：
 
 ```bat
 publish.bat                              生成 main/；缺少 JAR 或多个版本目录则失败，且不改已有 main/
@@ -215,7 +219,7 @@ python scripts\publish.py --check-inventory
 2. 删除 `extensions/<id>/`。
 3. 重新发布并重新打包。生成物中不再出现该扩展。
 
-`info.md` 建议章节见 [extension-spec.md](extension-spec.md)：Summary、Features、Compatibility、Database Changes、Usage & Configuration、Author/Support。
+`info.md` 建议章节见 [extension-spec.md](org.idempiere.myappx.extension.repository/extension-spec.md)：Summary、Features、Compatibility、Database Changes、Usage & Configuration、Author/Support。
 
 ---
 
@@ -223,7 +227,7 @@ python scripts\publish.py --check-inventory
 
 源文件中的 `downloadUrl` / `sha256` 会被 `publish.py` 在 `main/` 中覆盖。源文件可写相对 Maven 产物路径，便于本地对照。
 
-必填字段：`id`（等于目录名）、`name`、`version`（等于版本目录名）、`idempiereVersion`、`bundles`（至少一项，含 `symbolicName`）。`dependencies[].id` 必须出现在 `extensions.list` 更前面。完整约束见 [metadata-schema.json](metadata-schema.json)。
+必填字段：`id`（等于目录名）、`name`、`version`（等于版本目录名）、`idempiereVersion`、`bundles`（至少一项，含 `symbolicName`）。`dependencies[].id` 必须出现在 `extensions.list` 更前面。完整约束见 [metadata-schema.json](org.idempiere.myappx.extension.repository/metadata-schema.json)。
 
 catalog 版本和 Maven 包版本不一致时，加上 `versionFile`（模块内文本文件，第一行是 catalog 版本）和 `artifactVersion`（用来找 jar 的 Maven 版本）。发布生成的 `bundles[].version` 取 jar 清单里的 `Bundle-Version`，Extension Management 用它判断能否替换已安装的 bundle。
 
@@ -248,7 +252,7 @@ python scripts/generate_index.py --base-url http://host:18080/myappx-extension-r
 
 | 现象 | 处理 |
 |------|------|
-| Extension Management 看不到某扩展 | 确认已在 `extensions.list`，已 `publish.bat`，已打包本 bundle 并放入服务器 `plugins/`，且 bundle 已启动 |
+| Extension Management 看不到某扩展 | 确认已在 `extensions.list`，已 `publish.bat`，已用 `p2-install.bat` 装进服务器，且 bundle 已启动 |
 | 安装失败 / 无法下载 JAR | 重新构建对应模块后再发布。JAR 名必须是 `<symbolicName>-<version>.jar` 或带 `-SNAPSHOT`。Desktop Portal 的 `<version>` 是 `artifactVersion`（`14.0.0`），不是桌面版本 |
 | 桌面门户已安装但没有「更新」 | 重新构建 Portal 与 catalog，并换上服务器 `plugins/` 里的 catalog jar。Extension Management 比较 catalog `version`（`latest.txt`）。已安装版本不小于该值时不显示更新 |
 | URL 404 | 确认本 bundle 已安装并已启动，且 `IDEMPIERE_EXTENSION_REPOSITORY` 指向它的 Web-ContextPath |
@@ -263,7 +267,7 @@ python scripts/generate_index.py --base-url http://host:18080/myappx-extension-r
 
 | 文档 | 说明 |
 |------|------|
-| [extension-spec.md](extension-spec.md) | 扩展目录约定、`info.md` 与 metadata 示例 |
-| [metadata-schema.json](metadata-schema.json) | metadata JSON Schema |
-| [extensions/extension.md](extensions/extension.md) | 源目录结构说明 |
-| [`extensions.list`](extensions.list) | 发布清单与安装顺序 |
+| [extension-spec.md](org.idempiere.myappx.extension.repository/extension-spec.md) | 扩展目录约定、`info.md` 与 metadata 示例 |
+| [metadata-schema.json](org.idempiere.myappx.extension.repository/metadata-schema.json) | metadata JSON Schema |
+| [extensions/extension.md](org.idempiere.myappx.extension.repository/extensions/extension.md) | 源目录结构说明 |
+| [`extensions.list`](org.idempiere.myappx.extension.repository/extensions.list) | 发布清单与安装顺序 |

@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>idempiere.extensions</groupId>
+		<artifactId>idempiere.extension.parent</artifactId>
+		<version>${revision}</version>
+		<relativePath>../../idempiere-extension-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>org.idempiere.myappx.extension.repository.p2</artifactId>
+	<name>MyAppx Extension Repository P2</name>
+	<packaging>eclipse-repository</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-repository-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>build-site-p2</id>
+						<goals>
+							<goal>assemble-repository</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- lean site for updating an existing iDempiere/appxserver (do not ship platform jars) -->
+					<includeAllDependencies>false</includeAllDependencies>
+					<!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=512396 -->
+					<xzCompress>false</xzCompress>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

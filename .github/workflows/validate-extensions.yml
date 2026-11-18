@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+defaults:
+  run:
+    working-directory: org.idempiere.myappx.extension.repository
+
 jobs:
   validate-json:
     runs-on: ubuntu-latest
