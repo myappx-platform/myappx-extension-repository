@@ -174,6 +174,8 @@ mvn -Drevision=14.0.0-SNAPSHOT -pl myappx-extension-repository package
 
 发布先在 `main.staging/` 写完整棵目录，成功后再替换 `main/`。JAR 的 SHA-256 来自本次复制的文件。
 
+在 Windows 上换目录会因为编辑器、文件监视器、索引器或杀毒软件临时打开新目录里的文件而返回 `WinError 5`（Access denied）。`publish.py` 对 `main/`、`main.staging/`、`main.replaced/` 的改名与删除都做退避重试（20 次，50 ms 起翻倍），因此这种瞬时占用不再中断构建；只有目标目录真的冲突（`WinError 183`）才立即失败。换目录成功后清理旧树失败只打印 `[WARN]`，不影响已发布的 `main/`。
+
 ---
 
 ## 7. 脚本与选项

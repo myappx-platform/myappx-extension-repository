@@ -1,10 +1,10 @@
 {
   "id": "org.idempiere.myappx.desktop.portal",
-  "version": "6.2.2",
+  "version": "6.3.2",
   "versionFile": "latest.txt",
   "artifactVersion": "14.0.0",
   "idempiereVersion": "14",
-  "releaseDate": "2026-10-24",
+  "releaseDate": "2026-11-15",
   "name": "MyAppx Desktop Portal",
   "description": "Download page and electron-updater feed for the MyAppx Desktop client at /desktop/.",
   "categories": [

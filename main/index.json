@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-01T14:05:35.039378Z",
+  "generatedAt": "2026-11-18T11:45:11.756278Z",
   "extensions": [
     {
       "id": "org.idempiere.myappx.plugin.odt",
@@ -191,8 +191,8 @@
       "entityType": "MYAPPX.DESKTOP",
       "versions": [
         {
-          "version": "6.2.2",
-          "metadataUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.desktop.portal/6.2.2/metadata.json"
+          "version": "6.3.2",
+          "metadataUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.desktop.portal/6.3.2/metadata.json"
         }
       ],
       "infoUrl": "__MYAPPX_CATALOG_BASE__/main/extensions/org.idempiere.myappx.desktop.portal/info.md"

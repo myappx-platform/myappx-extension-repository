@@ -15,6 +15,7 @@ import hashlib
 import json
 import os
 import shutil
+import time
 from pathlib import Path
 
 from cataloglib import (
@@ -53,29 +54,78 @@ def catalog_url(base_url: str, relative_path: str) -> str:
     return f"{base_url.rstrip('/')}/{relative_path.lstrip('/')}"
 
 
+RENAME_ATTEMPTS = 20
+RENAME_INITIAL_DELAY = 0.05
+
+
+def rename_with_retry(src: Path, dst: Path, attempts: int = RENAME_ATTEMPTS) -> None:
+    """Rename a directory, retrying when a watcher holds a handle inside it.
+
+    On Windows a rename fails with WinError 5 (access denied) while any file
+    under src is still open -- an editor, the search indexer, an antivirus or a
+    file watcher that opened the tree the build just wrote. Those locks last
+    milliseconds, so a short backoff turns a flaky build into a reliable one.
+    WinError 183 (destination exists) is a real state error and is not retried.
+    """
+    delay = RENAME_INITIAL_DELAY
+    for attempt in range(1, attempts + 1):
+        try:
+            src.rename(dst)
+            return
+        except PermissionError:
+            if attempt == attempts:
+                raise
+            time.sleep(delay)
+            delay = min(delay * 2, 1.0)
+
+
+def rmtree_with_retry(path: Path, attempts: int = RENAME_ATTEMPTS) -> None:
+    """Remove a tree, retrying while open handles inside it block the delete."""
+    delay = RENAME_INITIAL_DELAY
+    for attempt in range(1, attempts + 1):
+        try:
+            shutil.rmtree(path)
+            return
+        except FileNotFoundError:
+            return
+        except OSError:
+            if attempt == attempts:
+                raise
+            time.sleep(delay)
+            delay = min(delay * 2, 1.0)
+
+
 def recover_failed_replace(dest: Path) -> None:
     backup = dest.with_name(dest.name + ".replaced")
     if not dest.exists() and backup.exists():
-        backup.rename(dest)
+        rename_with_retry(backup, dest)
 
 
 def replace_directory(staging: Path, dest: Path) -> None:
-    """Swap staging into dest only after the new tree is complete."""
+    """Swap staging into dest only after the new tree is complete.
+
+    Every step retries: the previous tree and the new one are both large enough
+    that an outside handle can hold either for a moment. Only the swap itself is
+    allowed to fail the build; once dest is in place, leftover cleanup must not.
+    """
     backup = dest.with_name(dest.name + ".replaced")
     if backup.exists():
-        shutil.rmtree(backup)
+        rmtree_with_retry(backup)
     moved = False
     if dest.exists():
-        dest.rename(backup)
+        rename_with_retry(dest, backup)
         moved = True
     try:
-        staging.rename(dest)
+        rename_with_retry(staging, dest)
     except Exception:
         if moved and backup.exists() and not dest.exists():
-            backup.rename(dest)
+            rename_with_retry(backup, dest)
         raise
     if backup.exists():
-        shutil.rmtree(backup)
+        try:
+            rmtree_with_retry(backup)
+        except OSError as exc:
+            print(f"[WARN] {backup.name} could not be removed ({exc}); delete it later.")
 
 
 def sync_external_versions(root: Path, entries: list[tuple[str, str]]) -> None:
@@ -189,7 +239,13 @@ def publish(base_url: str) -> None:
 
     staging = root / "main.staging"
     if staging.exists():
-        shutil.rmtree(staging)
+        try:
+            rmtree_with_retry(staging)
+        except OSError as exc:
+            raise SystemExit(
+                f"Cannot remove the leftover {staging} ({exc}). A process is holding a file inside it. "
+                "Close it (editor, server, antivirus scan) and run the build again."
+            ) from exc
     bundles_dir = staging / "bundles"
     extensions_out = staging / "extensions"
     bundles_dir.mkdir(parents=True)

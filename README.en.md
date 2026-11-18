@@ -174,6 +174,8 @@ Put `myappx-extension-repository/target/org.idempiere.myappx.extension.repositor
 
 Publish writes the complete tree under `main.staging/` and replaces `main/` only after that succeeds. SHA-256 is computed from the copied JAR.
 
+On Windows, renaming a directory fails with `WinError 5` (access denied) while an editor, file watcher, indexer or antivirus still holds a file inside it. `publish.py` therefore retries every rename and delete of `main/`, `main.staging/` and `main.replaced/` with backoff (20 attempts, starting at 50 ms and doubling), so those momentary locks no longer break the build. A genuine destination conflict (`WinError 183`) still fails at once. Failing to clean up the old tree after a successful swap only prints `[WARN]` and leaves the published `main/` intact.
+
 ---
 
 ## 7. Scripts and options
