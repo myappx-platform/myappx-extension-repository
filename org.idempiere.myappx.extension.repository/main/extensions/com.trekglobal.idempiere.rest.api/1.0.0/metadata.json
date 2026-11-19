@@ -21,7 +21,7 @@
     {
       "symbolicName": "com.trekglobal.idempiere.rest.api",
       "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/com.trekglobal.idempiere.rest.api_1.0.0.jar",
-      "sha256": "cae560aa2f2a39ae7bec45213fda8abdcbc07988d2796752c10794fb8975e8d4"
+      "sha256": "fab6f942d227c5085ab779b6f1786ec8f5b3d082539fb7c496257973e089216f"
     }
   ],
   "dependencies": [],

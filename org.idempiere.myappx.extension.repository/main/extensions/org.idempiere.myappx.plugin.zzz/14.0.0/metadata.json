@@ -21,7 +21,7 @@
     {
       "symbolicName": "org.idempiere.myappx.plugin.zzz",
       "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.zzz_14.0.0.jar",
-      "sha256": "c9ce2a9ca4e2eaff617ae433875ce744eac1ac6973434fca1f150f5287fb8241"
+      "sha256": "26c175cd3dea68686ca115545a5687ea0754d43566ffadc07a63ae317469e18f"
     }
   ],
   "dependencies": [
