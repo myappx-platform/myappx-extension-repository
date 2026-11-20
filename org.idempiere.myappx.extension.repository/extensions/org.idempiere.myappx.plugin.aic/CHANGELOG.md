@@ -2,6 +2,12 @@
 
 All notable changes to this extension are documented here.
 
+## [1.0.6] - 2026-11-20
+
+### Changed
+
+* Catalog version tracks bundle `org.idempiere.myappx.plugin.aic` 1.0.6.
+
 ## [1.0.5] - 2026-11-20
 
 ### Changed

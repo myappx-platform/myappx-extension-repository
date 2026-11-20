@@ -1,0 +1,1 @@
+.\p2-install.bat C:\kenhome\KSYS\myappx-portable\appxserver
