@@ -20,7 +20,7 @@
     {
       "symbolicName": "org.idempiere.mcp.server",
       "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.mcp.server_1.0.0.jar",
-      "sha256": "47e2cb825099034fb9305d9b8aad9c0c09886708ec45ee65a01d927897ce4a28"
+      "sha256": "5cd3ee70d8d9fa4e9171ed5a384fa8c2a33c3584a63d4bb1239d5a0461b131fa"
     }
   ],
   "dependencies": [

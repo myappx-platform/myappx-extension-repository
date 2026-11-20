@@ -1,8 +1,8 @@
 {
   "id": "org.idempiere.myappx.plugin.aic",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "idempiereVersion": "14",
-  "releaseDate": "2026-11-19",
+  "releaseDate": "2026-11-20",
   "name": "iDempiere AI Copilot",
   "description": "AI orchestrator with Bedrock/SiliconFlow, MCP tools, desktop Copilot, and /ai chat APIs. Requires ODT, REST, and MCP.",
   "categories": [
@@ -21,7 +21,7 @@
   "bundles": [
     {
       "symbolicName": "org.idempiere.myappx.plugin.aic",
-      "downloadUrl": "../myappx-plugin-aicopilot/target/org.idempiere.myappx.plugin.aic-1.0.2-SNAPSHOT.jar"
+      "downloadUrl": "../myappx-plugin-aicopilot/target/org.idempiere.myappx.plugin.aic-1.0.5-SNAPSHOT.jar"
     }
   ],
   "dependencies": [
