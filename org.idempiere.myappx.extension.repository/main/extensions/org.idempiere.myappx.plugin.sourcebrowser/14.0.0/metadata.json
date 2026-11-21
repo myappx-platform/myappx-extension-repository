@@ -21,7 +21,7 @@
     {
       "symbolicName": "org.idempiere.myappx.plugin.sourcebrowser",
       "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.sourcebrowser_14.0.0.jar",
-      "sha256": "f864e7e6a60209463b1c318409feac0e61045f7b9789cfbb4cb7072b91d107c0"
+      "sha256": "fe8a975bf7bc603c22c31195a62570b1ef5d0c604ff4930f207ec674286a7668"
     }
   ],
   "dependencies": [
