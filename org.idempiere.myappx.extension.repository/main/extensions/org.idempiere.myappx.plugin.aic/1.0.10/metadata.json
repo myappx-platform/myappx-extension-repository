@@ -1,6 +1,6 @@
 {
   "id": "org.idempiere.myappx.plugin.aic",
-  "version": "1.0.8",
+  "version": "1.0.10",
   "idempiereVersion": "14",
   "releaseDate": "2026-11-21",
   "name": "iDempiere AI Copilot",
@@ -21,8 +21,8 @@
   "bundles": [
     {
       "symbolicName": "org.idempiere.myappx.plugin.aic",
-      "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.aic_1.0.8.jar",
-      "sha256": "af85d62dfe5a74ecc388f3a35506585be459935614b0d851d26af1dd17e24c17"
+      "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.aic_1.0.10.jar",
+      "sha256": "c7df81128f0d8159e5493bb0e4115e461d30c3b433b000793dfabe8ecc585f96"
     }
   ],
   "dependencies": [

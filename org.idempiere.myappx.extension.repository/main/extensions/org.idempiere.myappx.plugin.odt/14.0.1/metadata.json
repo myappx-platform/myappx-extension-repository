@@ -1,8 +1,8 @@
 {
   "id": "org.idempiere.myappx.plugin.odt",
-  "version": "14.0.0",
+  "version": "14.0.1",
   "idempiereVersion": "14",
-  "releaseDate": "2026-07-14",
+  "releaseDate": "2026-11-22",
   "name": "MyAppx ObjectData Tool (ODT)",
   "description": "Structured Application Dictionary packaging, versioning, and install engine for MyAppx plugins.",
   "categories": [
@@ -19,8 +19,8 @@
   "bundles": [
     {
       "symbolicName": "org.idempiere.myappx.plugin.odt",
-      "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.odt_14.0.0.jar",
-      "sha256": "7b65856b7bfa03153b141ea7fcd7751ffebc1b9c9ed477d851e392a632793b4f"
+      "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.odt_14.0.1.jar",
+      "sha256": "10f58b0ac1766925b63d2226d4ab270211845e6870113503325361c015437e63"
     }
   ],
   "dependencies": [],
