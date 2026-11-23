@@ -12,6 +12,15 @@
 	<name>MyAppx Extension Repository P2</name>
 	<packaging>eclipse-repository</packaging>
 
+	<dependencies>
+		<dependency>
+			<groupId>idempiere.extensions</groupId>
+			<artifactId>org.idempiere.myappx.desktop.portal</artifactId>
+			<version>${revision}</version>
+			<type>eclipse-plugin</type>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>

@@ -16,7 +16,7 @@ Upstream layout: [iDempiere Extension Repository](https://github.com/idempiere/i
 | Inventory / install order | [`extensions.list`](org.idempiere.myappx.extension.repository/extensions.list) |
 | Source metadata | `extensions/<Bundle-SymbolicName>/` (1:1 with list) |
 | Generated catalog | `main/` (`index.json`, extensions, bundles), packed into this bundle |
-| Deploy | [`p2-install.bat`](p2-install.bat) installs it with the p2 director |
+| Deploy | Packed into the myappx-server product; [`p2-install.bat`](p2-install.bat) only updates a server that is already installed |
 | JVM property | `-DIDEMPIERE_EXTENSION_REPOSITORY=...` |
 | Web UI | **System Admin → Extension Management** |
 
@@ -139,15 +139,13 @@ example-plugin|com.example.plugin
 
 Each extension keeps one current version folder, and that folder name must equal `version`. Publish fails when more than one version folder is present.
 
-The Desktop Portal catalog `version` comes from `myappx-desktop-portal/latest.txt` (the desktop client version, for example `6.2.2`). The Maven file stays `org.idempiere.myappx.desktop.portal-14.0.0-SNAPSHOT.jar`. metadata splits those with `versionFile` (`latest.txt`) and `artifactVersion` (`14.0.0`). Before validation, `publish.py` renames the single version folder to the `latest.txt` value and writes the built jar's `Bundle-Version` into the generated `bundles[].version`.
-
 The live inventory is [`extensions.list`](org.idempiere.myappx.extension.repository/extensions.list). Republish after you change it.
 
 ---
 
 ## 6. Publish workflow
 
-Catalog plugin modules are listed before this module. `myappx-desktop-portal` is one of them: its own `prepare-package` runs `scripts/publish.py` first, copying the installer, `latest.yml`, and download page from `myappx-desktop/release` into the portal, then packages the jar. This module's `prepare-package` then runs the catalog `publish.py` (missing JARs fail the build) and packs `main/` into the bundle. `myappx-plugins/build.bat` is that one command. After a desktop version change, run that build again; the catalog version folder follows `latest.txt`.
+Catalog plugin modules are listed before this module. This module's `prepare-package` runs the catalog `publish.py` (missing JARs fail the build) and packs `main/` into the bundle. `myappx-plugins/build.bat` is that one command.
 
 ```bat
 cd myappx-plugins
@@ -165,7 +163,7 @@ mvn -Drevision=14.0.0-SNAPSHOT package
 
 That `package` publishes again and writes `org.idempiere.myappx.extension.repository.p2\target\repository`. Add `-Dmyappx.skip.catalog.publish=true` when `publish.bat` has just written `main/`.
 
-Stop the server, then install with the p2 director (uninstall, then install):
+A newly built myappx-server package already contains this bundle; unpack it and start. To update a server that is already installed without rebuilding the whole package, stop the server, then use the p2 director (uninstall, then install):
 
 ```bat
 cd myappx-extension-repository
@@ -229,8 +227,6 @@ Suggested `info.md` sections are in [extension-spec.md](org.idempiere.myappx.ext
 
 Required fields: `id` (equals the directory name), `name`, `version` (equals the version folder name), `idempiereVersion`, `bundles` (at least one entry with `symbolicName`). Each `dependencies[].id` must appear earlier in `extensions.list`. Full constraints: [metadata-schema.json](org.idempiere.myappx.extension.repository/metadata-schema.json).
 
-When the catalog version and the Maven artifact version differ, set `versionFile` (a module-relative text file whose first line is the catalog version) and `artifactVersion` (the Maven version used to find the jar). The generated `bundles[].version` is the jar manifest `Bundle-Version`. Extension Management uses that value when replacing an installed bundle.
-
 `idempiereVersion` and `dependencies.version` follow [OSGi semantic version ranges](https://docs.osgi.org/whitepaper/semantic-versioning/040-semantic-versions.html).
 
 ---
@@ -252,9 +248,8 @@ python scripts/generate_index.py --base-url http://host:18080/myappx-extension-r
 
 | Symptom | What to do |
 |---------|------------|
-| Extension Management does not show an extension | Confirm it is in `extensions.list`, run `publish.bat`, install this bundle with `p2-install.bat`, and confirm the bundle is started |
-| Install fails / JAR cannot be downloaded | Rebuild that module, then republish. The JAR name must be `<symbolicName>-<version>.jar` or the `-SNAPSHOT` form. For Desktop Portal, `<version>` is `artifactVersion` (`14.0.0`), not the desktop version |
-| Desktop Portal is installed but Update is hidden | Rebuild the portal and the catalog, then replace the catalog jar in the server `plugins/` directory. Extension Management compares the catalog `version` (`latest.txt`). Update stays hidden when the installed version is not lower |
+| Extension Management does not show an extension | Confirm it is in `extensions.list`, run `publish.bat`, and confirm this bundle is in the server package or was updated with `p2-install.bat` and is started |
+| Install fails / JAR cannot be downloaded | Rebuild that module, then republish. The JAR name must be `<symbolicName>-<version>.jar` or the `-SNAPSHOT` form |
 | URL 404 | Confirm this bundle is installed and started, and `IDEMPIERE_EXTENSION_REPOSITORY` points at its Web-ContextPath |
 | `index.json` order is wrong | Change order in `extensions.list` and republish |
 | Publish reports a dependency order error | Move the dependency earlier in `extensions.list` |

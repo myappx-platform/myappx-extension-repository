@@ -21,7 +21,7 @@
     {
       "symbolicName": "org.idempiere.myappx.plugin.tenant.default",
       "downloadUrl": "__MYAPPX_CATALOG_BASE__/main/bundles/org.idempiere.myappx.plugin.tenant.default_14.0.0.jar",
-      "sha256": "0074741f4424a31d1e2c6e092497dd04a03978e983879b23781870124fa650f3"
+      "sha256": "c3f17e33471e5a801998128b5755370302bc5faf5c7e3f2d70ca51221d42824e"
     }
   ],
   "dependencies": [

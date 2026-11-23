@@ -3,5 +3,8 @@
    <bundle id="org.idempiere.myappx.extension.repository" version="14.0.0.qualifier">
       <category name="myappx.extension.repository"/>
    </bundle>
+   <bundle id="org.idempiere.myappx.desktop.portal" version="14.0.0.qualifier">
+      <category name="myappx.extension.repository"/>
+   </bundle>
    <category-def name="myappx.extension.repository" label="MyAppx Extension Repository"/>
 </site>
